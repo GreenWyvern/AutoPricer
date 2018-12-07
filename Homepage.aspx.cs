@@ -26,7 +26,7 @@ public partial class Homepage : System.Web.UI.Page
                     Response.Redirect("~/UserList.aspx");//web management (delete users)
                     break;
                 case 3:
-                    Response.Redirect("~/UserProfile.aspx");//FAQ
+                    Response.Redirect("~/FAQ.aspx");//FAQ
                     break;
             }
         }
