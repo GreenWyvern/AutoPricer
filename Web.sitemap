@@ -4,5 +4,6 @@
     <siteMapNode url="~/Listing_Result.aspx" title="All Listings"  description="Listings" />
     <siteMapNode url="~/Search.aspx" title="Search"  description="Search" />
     <siteMapNode url="~/Login.aspx" title="Login/Register"  description="Login/Register" />
+    <siteMapNode url="~/FAQ.aspx" title="FAQ"  description="FAQ" />
   </siteMapNode>
 </siteMap>
