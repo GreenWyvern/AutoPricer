@@ -13,6 +13,7 @@ public partial class UserProfile : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         connectionString = ConfigurationManager.ConnectionStrings["database"].ToString();
+        fill();
     }
 
     protected void btnBack_Click(object sender, EventArgs e)
@@ -23,10 +24,10 @@ public partial class UserProfile : System.Web.UI.Page
     protected void btnSave_Click(object sender, EventArgs e)
     {
         SqlConnection conn = new SqlConnection(connectionString);
-        SqlCommand comm = new SqlCommand("INSERT INTO CreditCard (CardNumber,ExpireDate,CVD) VALUES (@CardNumber,@ExpireDate,@CVD) ", conn);
-        comm.Parameters.AddWithValue("@CardNumber", tbEmail.Text);
-        comm.Parameters.AddWithValue("@ExpireDate", tbAddress.Text);
-        comm.Parameters.AddWithValue("@CVD", tbPhone.Text);
+        SqlCommand comm = new SqlCommand("INSERT INTO CreditCard (Email,Address,Phone) VALUES (@Email,@Address,@Phone) ", conn);
+        comm.Parameters.AddWithValue("@Email", tbEmail.Text);
+        comm.Parameters.AddWithValue("@Address", tbAddress.Text);
+        comm.Parameters.AddWithValue("@Phone", tbPhone.Text);
 
         try
         {
@@ -37,5 +38,24 @@ public partial class UserProfile : System.Web.UI.Page
         catch (Exception)
         {
         }
+    }
+    
+    
+    protected void fill()
+    {
+        SqlCommand comm = new SqlCommand("SELECT Email,Address,Phone FROM [User] WHERE Username=@username", conn);
+        comm.Parameters.AddWithValue("@User", System.Web.HttpContext.Current.Session["user"]);
+        try
+        {
+            conn.Open();
+            string account = "";
+
+            SqlDataReader reader = comm.ExecuteReader();
+
+            //add to email reader.Read().ToString().Trim();
+            //add to address reader.Read().ToString().Trim();
+            //add to phone reader.Read().ToString().Trim();
+
+            reader.Close();
     }
 }
