@@ -21,6 +21,14 @@
                         <asp:TextBox ID="tbPassword" runat="server" TextMode="Password"/>
                     </asp:TableCell>
                 </asp:TableRow>
+                <asp:TableRow ID="rowCode" Visible="false" runat="server">
+                    <asp:TableCell>
+                        Authentication Code:
+                    </asp:TableCell>
+                    <asp:TableCell>
+                        <asp:TextBox ID="tbCode" runat="server" TextMode="Number"/>
+                    </asp:TableCell>
+                </asp:TableRow>
             </asp:Table>
             <br/><asp:Button ID="btnLogin" runat="server" Text="Login" onclick="btnLogin_Click"/>
             <asp:Button ID="btnRegister" runat="server" Text="Register" onclick="btnRegister_Click"/><br />

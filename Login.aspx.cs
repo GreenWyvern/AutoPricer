@@ -46,27 +46,78 @@ using System.Web.UI.WebControls;
             {
                 System.Web.HttpContext.Current.Session["user"] = tbUsername.Text;
                 System.Web.HttpContext.Current.Session["accountType"] = "admin";
-                Response.Redirect("~/Admin.aspx");
+                if (requireAuthentication(tbUsername.Text))
+                {
+                    if(rowCode.Visible == false)
+                    {
+                        rowCode.Visible = true;
+                        return;
+                    }
+                    else
+                    {
+                        SqlCommand comm2 = new SqlCommand("SELECT Code FROM Authentication WHERE Username=@username", conn);
+                        comm2.Parameters.AddWithValue("@username", tbUsername.Text);
+
+                        SqlDataReader reader2 = comm2.ExecuteReader();
+                        while (reader2.Read())
+                        {
+                            int code = reader2.GetInt32(0);
+
+                            int inputCode = 0;
+                            int.TryParse(tbCode.Text, out inputCode);
+
+                            if (code == inputCode)
+                            {
+                                reader2.Close();
+                                if (generateNewAuthenticationCode(tbUsername.Text))
+                                {
+                                    Response.Redirect("~/Admin.aspx");
+                                }
+                            }
+                            else
+                            {
+                                labelWarning.Text = "Incorrect Code!";
+                            }
+                            return;
+                        }
+                        reader2.Close();
+                    }
+                }
+                else
+                {
+                    Response.Redirect("~/Admin.aspx");
+                }
             }
             else if (account.Equals("regular"))
             {
                 System.Web.HttpContext.Current.Session["user"] = tbUsername.Text;
                 System.Web.HttpContext.Current.Session["accountType"] = "regular";
-                Response.Redirect("~/UserProfile.aspx");
+                if (requireAuthentication(tbUsername.Text))
+                {
+                   
+                }
+                else
+                {
+                    Response.Redirect("~/UserProfile.aspx");
+                }
             }
             else
             {
                 labelWarning.Text = "account not found";
             }
-            conn.Close();
+            
         }
         catch (Exception ex)
         {
-            tbUsername.Text = "conn not working";
+            labelWarning.Text = ex.Message;
+        }
+        finally
+        {
+            conn.Close();
         }
     }
 
-        private void emailConfirm()//set the user account type to activated
+    private void emailConfirm()//set the user account type to activated
         {
             
             SqlCommand comm = new SqlCommand("UPDATE user SET AccountType = Activated WHERE Username =@username ", conn);
@@ -81,4 +132,101 @@ using System.Web.UI.WebControls;
             {
             }
         }
+
+
+    private bool requireAuthentication(string username)
+    {
+        SqlCommand comm = new SqlCommand("SELECT * FROM Authentication WHERE Username=@username", conn);
+        comm.Parameters.AddWithValue("@username", tbUsername.Text);
+        try
+        {
+            SqlDataReader reader = comm.ExecuteReader();
+            while (reader.Read())
+            {
+                DateTime expiryTime = reader.GetDateTime(2);
+                DateTime now = DateTime.Now;
+
+                // If the authentication code expiry 5 minutes ago then user must do authentication
+                if (now >= expiryTime)
+                {
+                    reader.Close();
+                    bool sent = sendAuthenticationCode(tbUsername.Text);
+                    labelWarning.Text = "2 Way Authentication Required!\n" + (sent ? "Authentication Code Sent. " : "") + "Please check your email. This might take a while.";
+                    return true;
+                }
+            }
+            reader.Close();
+        }
+        catch(Exception ex)
+        {
+            labelWarning.Text = ex.Message;
+        }
+        return false;
     }
+
+    private bool generateNewAuthenticationCode(string username)
+    {
+        try
+        {
+            int newCode = new Random().Next(1000, 10000);
+            DateTime expiryTime = DateTime.Now.AddMinutes(5);
+
+            SqlCommand comm = new SqlCommand("UPDATE Authentication SET Code=@code, ExpiryTime=@expiryTime WHERE Username=@username", conn);
+            comm.Parameters.AddWithValue("@username", tbUsername.Text);
+            comm.Parameters.AddWithValue("@code", newCode);
+            comm.Parameters.AddWithValue("@expiryTime", expiryTime);
+
+            if (comm.ExecuteNonQuery() > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        catch (Exception ex)
+        {
+            labelWarning.Text = ex.Message;
+        }
+        return false;
+    }
+
+    private bool sendAuthenticationCode(string username)
+    {
+        try
+        {
+            SqlCommand getCodeComm = new SqlCommand("Select Code From Authentication WHERE Username=@username", conn);
+            getCodeComm.Parameters.AddWithValue("@username", username);
+            SqlCommand getEmailComm = new SqlCommand("Select Email From [User] WHERE Username=@username", conn);
+            getEmailComm.Parameters.AddWithValue("@username", username);
+
+            SqlDataReader reader = getCodeComm.ExecuteReader();
+
+            reader.Read();
+            int code = reader.GetInt32(0);
+
+            reader.Close();
+
+            reader = getEmailComm.ExecuteReader();
+            reader.Read();
+
+            string emailAddress = reader.GetString(0);
+
+            reader.Close();
+
+            string message = "Hello <b>" + username + "</b>,\n<br>Here is your authentication code: <b>" + code + "</b>";
+
+            labelWarning.Text += code;
+            labelWarning.Text += emailAddress;
+
+            EmailSender.Send(emailAddress, "Auto Price Authentication Code", message);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            labelWarning.Text = ex.Message;
+        }
+        return false;
+    }
+}

@@ -42,9 +42,11 @@ public partial class Register : System.Web.UI.Page
             if (user.Equals("") && Convert.ToInt32(tbConfirm.Text) == confirmNumber)//if account not taken
             {
                 SqlCommand comm2 = new SqlCommand(@"INSERT INTO [User](Username,Password,Email,Address,PhoneNumber,AccountType) Values('" + tbUsername.Text + "', '" + tbPassword.Text + "', '" + tbEmail.Text + "', '" + tbAddress.Text + "', '" + tbPhone.Text + "'," + "'regular')", conn);
+                SqlCommand comm3 = new SqlCommand(@"INSERT INTO Authentication(Username,Code,ExpiryTime) Values('" + tbUsername.Text + "'," + 0 + "," + DateTime.Now + ")", conn);
                 try
                 {
                     comm2.ExecuteNonQuery();
+                    comm3.ExecuteNonQuery();
                     Response.Redirect("~/EmailConfirmation.aspx");
                 }
                 catch (Exception ex)
