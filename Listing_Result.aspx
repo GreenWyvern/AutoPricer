@@ -5,7 +5,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
 
-            <asp:DataList ID="DataList1" runat="server" DataKeyField="ListingID" DataSourceID="SqlDataSource1" OnItemCommand="DataList1_ItemCommand" BackColor="Black" Font-Bold="False" Font-Italic="False" Font-Overline="False" Font-Strikeout="False" Font-Underline="False" ForeColor="White">
+            <asp:DataList ID="DataList1" runat="server" DataKeyField="ListingID" DataSourceID="SqlDataSource1" OnItemCommand="DataList1_ItemCommand" Font-Bold="False" Font-Italic="False" Font-Overline="False" Font-Strikeout="False" Font-Underline="False" >
                 <EditItemTemplate>
                     ListingID:
                     <asp:Label ID="ListingIDLabel" runat="server" Text='<%# Eval("ListingID") %>' />

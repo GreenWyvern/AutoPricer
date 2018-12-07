@@ -20,7 +20,7 @@ public partial class Homepage : System.Web.UI.Page
                     Response.Redirect("~/UserProfile.aspx");//user profile
                     break;
                 case 1:
-                    Response.Redirect("~/Listing_Results.aspx");//listings
+                    Response.Redirect("~/Listing_Description.aspx");//add listings
                     break;
                 case 2:
                     Response.Redirect("~/UserList.aspx");//web management (delete users)
