@@ -43,19 +43,25 @@ public partial class UserProfile : System.Web.UI.Page
     
     protected void fill()
     {
-        SqlCommand comm = new SqlCommand("SELECT Email,Address,Phone FROM [User] WHERE Username=@username", conn);
+		SqlConnection conn = new SqlConnection(connectionString);
+		SqlCommand comm = new SqlCommand("SELECT Email,Address,Phone FROM [User] WHERE Username=@username", conn);
         comm.Parameters.AddWithValue("@User", System.Web.HttpContext.Current.Session["user"]);
-        try
-        {
-            conn.Open();
-            string account = "";
+		try
+		{
+			conn.Open();
+			string account = "";
 
-            SqlDataReader reader = comm.ExecuteReader();
+			SqlDataReader reader = comm.ExecuteReader();
 
-            //add to email reader.Read().ToString().Trim();
-            //add to address reader.Read().ToString().Trim();
-            //add to phone reader.Read().ToString().Trim();
+			//add to email reader.Read().ToString().Trim();
+			//add to address reader.Read().ToString().Trim();
+			//add to phone reader.Read().ToString().Trim();
 
-            reader.Close();
+			reader.Close();
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e);
+		}
     }
 }
