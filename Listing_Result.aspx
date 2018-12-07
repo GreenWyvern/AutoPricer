@@ -40,7 +40,7 @@
                     <asp:Label ID="ListingStatusLabel" runat="server" Text='<%# Eval("ListingStatus") %>' />
                     <br />
                     <asp:Button ID="Button0" runat="server" Text="Edit" CommandName="Edit"/>
-<br />
+<br />              <hr/>
                 </ItemTemplate>
             </asp:DataList>
             <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="SELECT * FROM [Listing]"></asp:SqlDataSource>

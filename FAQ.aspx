@@ -1,13 +1,10 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="FAQ.aspx.cs" Inherits="FAQ" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true"  MasterPageFile="~/MasterPage.master" CodeFile="FAQ.aspx.cs" Inherits="FAQ" %>
 
-<!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <title></title>
-</head>
-<body style="font-family: Verdana, Geneva, Tahoma, sans-serif; margin-right: 150px; margin-left: 150px">
-    <form id="form1" runat="server">
+<asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+    <title>FAQ</title>
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+<div style="font-family: Verdana, Geneva, Tahoma, sans-serif; margin-right: 150px; margin-left: 150px">
         <div>
             <h1>FAQ</h1>
         </div>
@@ -31,7 +28,5 @@
         <p>Are you a cop?</p>
 
         <asp:Button ID="btnBack" runat="server" Text="Back to Homepage" OnClick="btnBack_Click"/>
-
-    </form>
-</body>
-</html>
+</div>
+</asp:Content>
