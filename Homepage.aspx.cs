@@ -17,16 +17,16 @@ public partial class Homepage : System.Web.UI.Page
             switch (Select1.SelectedIndex)
             {
                 case 0:
-                    Response.Redirect("~/UserProfile.aspx");
+                    Response.Redirect("~/UserProfile.aspx");//user profile
                     break;
                 case 1:
-                    Response.Redirect("~/UserProfile.aspx");//listings
+                    Response.Redirect("~/Listing_Description.aspx");//add listings
                     break;
                 case 2:
-                    Response.Redirect("~/UserProfile.aspx");//web management (delete users)
+                    Response.Redirect("~/UserList.aspx");//web management (delete users)
                     break;
                 case 3:
-                    Response.Redirect("~/UserProfile.aspx");//FAQ
+                    Response.Redirect("~/FAQ.aspx");//FAQ
                     break;
             }
         }
