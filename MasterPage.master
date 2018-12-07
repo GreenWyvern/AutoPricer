@@ -15,7 +15,7 @@
                 <staticmenuitemstyle horizontalpadding="30" />
             </asp:Menu>
         </div>
-    <div style="text-align:center; width:800px; background-color:#DFDFDF;">
+    <div style="text-align:center; width:1200px; background-color:#DFDFDF;">
         <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">
         </asp:ContentPlaceHolder>
     </div>
