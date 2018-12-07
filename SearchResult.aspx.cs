@@ -11,6 +11,9 @@ public partial class SearchResult : System.Web.UI.Page
     {
         if (!IsPostBack)
         {
+
+            BindGrid(Session["Search"].ToString());
+            /*
             //get the query string(filter)
             string model = Request.QueryString["model"];
             string make = Request.QueryString["make"];
@@ -23,6 +26,7 @@ public partial class SearchResult : System.Web.UI.Page
                     "\'" + " AND mileage =\'" + mileage +
                     "\'" + " AND condition =\'" + condition);
             }
+            */
         }
     }
 
