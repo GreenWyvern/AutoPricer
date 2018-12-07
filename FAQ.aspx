@@ -21,6 +21,15 @@
         <h3>How do I sell a car?</h3>
         <p>Just sign up, log in, and then fill out the car selling form. Then, wait for someone who finds interest in your listing!</p>
 
+        <h3>How do I know you won't steal my credit card info?</h3>
+        <p>Because you don't enter it anywhere in the site. It is physically impossible for us to steal your credit card information.</p>
+
+        <h3>Are you sure?</h3>
+        <p>Positive.</p>
+
+        <h3>Really?</h3>
+        <p>Are you a cop?</p>
+
         <asp:Button ID="btnBack" runat="server" Text="Back to Homepage" OnClick="btnBack_Click"/>
 
     </form>
