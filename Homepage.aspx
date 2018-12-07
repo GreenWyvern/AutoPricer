@@ -6,20 +6,21 @@
     <table>
         <td>
     <div >
-        <select id="Select1" runat="server" onselect="goToPages">
-            <option></option>
-            <option>Profile</option>
-            <option>List</option>
-            <option>About</option>
-            <option>Contact</option>
-        </select>
+        <asp:DropDownList id="Select1" runat="server"  AutoPostBack="True"  OnSelectedIndexChanged="goToPages">
+            <asp:ListItem >User Options</asp:ListItem>
+            <asp:ListItem >Profile</asp:ListItem>
+            <asp:ListItem >List</asp:ListItem>
+            <asp:ListItem >Management</asp:ListItem>
+        </asp:DropDownList>
+        </br>
+        <asp:Literal ID="test" runat="server"></asp:Literal>
     </div>
     <div>
         <h1 style="text-align:center;">Auto Pricer </h1>
         <hr>
         <h3>Hello there, welcome to autopricer where you can</h3>
         <hr>
-        <h3>about us xxx</h3>
+        <h3>asdasdas</h3>
     </div>
         </td>
         <td>

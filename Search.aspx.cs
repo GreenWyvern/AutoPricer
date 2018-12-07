@@ -14,8 +14,8 @@ using System.Web.UI.WebControls;
 
         protected void btnSearch_Click(object sender, EventArgs e)
         {
-            string link = "~/ListingResult.aspx?statement=\"" + selectStatement() + "\"";
-            Response.Redirect(link);
+        Session["Search"] = selectStatement();
+        Response.Redirect("~/SearchResult.aspx");
         }
 
         private string selectStatement()

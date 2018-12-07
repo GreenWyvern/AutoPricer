@@ -4,7 +4,7 @@
     <title>Search</title>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
-            Enter the criterias, enter the other ones blink
+            Enter the criterias, leave the other ones blink
             <asp:Table runat="server">
                 <asp:TableRow>
                     <asp:TableCell>

@@ -13,17 +13,26 @@ public partial class Homepage : System.Web.UI.Page
 
     protected void goToPages(object sender, EventArgs e)
     {
-        switch (Select1.SelectedIndex)
-        {
-            case 0:
-                profilePage();
-                break;
-        }
-    }
+        if (Session["accountType"] != null) { 
+        
+            switch (Select1.SelectedIndex)
+            {
+                case 1:
+                    Response.Redirect("~/UserProfile.aspx");//user profile
+                    break;
+                case 2:
+                    Response.Redirect("~/Listing_Description.aspx");//add listings
+                    break;
+                case 3:
+                    Response.Redirect("~/UserList.aspx");//web management (delete users)
+                    break;
+            }
 
-    void profilePage()
-    {
-        if (Session["accountType"] != null) { Response.Redirect("~/UserProfile.aspx"); }
+        }
+        else
+        {
+            test.Text = "Please login first !";
+        }
     }
 
 }
