@@ -30,7 +30,7 @@ public class EmailSender
 
         msg.Subject = title;
         msg.IsBodyHtml = true;
-        msg.Body = string.Format("<html><head></head><body>{0}</body>", message);
+        msg.Body = string.Format("<html><head></head><body>{0}</body></html>", message);
 
         try
         {
@@ -38,7 +38,7 @@ public class EmailSender
         }
         catch (Exception ex)
         {
-
+            throw ex;
         }
     }
 }
