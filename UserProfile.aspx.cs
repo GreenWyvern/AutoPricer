@@ -18,13 +18,13 @@ public partial class UserProfile : System.Web.UI.Page
 
     protected void btnBack_Click(object sender, EventArgs e)
     {
-        Response.Redirect("~/Home.aspx");
+        Response.Redirect("~/Homepage.aspx");
     }
 
     protected void btnSave_Click(object sender, EventArgs e)
     {
         SqlConnection conn = new SqlConnection(connectionString);
-        SqlCommand comm = new SqlCommand("INSERT INTO CreditCard (Email,Address,Phone) VALUES (@Email,@Address,@Phone) ", conn);
+        SqlCommand comm = new SqlCommand("INSERT INTO User (Email,Address,PhoneNumber) VALUES (@Email,@Address,@Phone) ", conn);
         comm.Parameters.AddWithValue("@Email", tbEmail.Text);
         comm.Parameters.AddWithValue("@Address", tbAddress.Text);
         comm.Parameters.AddWithValue("@Phone", tbPhone.Text);
@@ -44,18 +44,17 @@ public partial class UserProfile : System.Web.UI.Page
     protected void fill()
     {
 		SqlConnection conn = new SqlConnection(connectionString);
-		SqlCommand comm = new SqlCommand("SELECT Email, Address, Phone FROM [User] WHERE Username=@username", conn);
-        //comm.Parameters.AddWithValue("@User", System.Web.HttpContext.Current.Session["user"]);
+		SqlCommand comm = new SqlCommand("SELECT Email, Address, PhoneNumber FROM [User] WHERE Username=@username", conn);
+        comm.Parameters.AddWithValue("@username", System.Web.HttpContext.Current.Session["user"]);
 		try
 		{
 			conn.Open();
 
 			SqlDataReader reader = comm.ExecuteReader();
-
-            tbEmail.Text=reader.Read().ToString().Trim();
-            tbAddress.Text = reader.Read().ToString().Trim();
-            tbPhone.Text = reader.Read().ToString().Trim();
-
+            reader.Read();
+            tbEmail.Text = reader.GetString(0);
+            tbAddress.Text = reader.GetString(1);
+            tbPhone.Text = reader.GetString(2);
             reader.Close();
 		}
 		catch (Exception e)
