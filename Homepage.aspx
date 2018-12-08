@@ -18,9 +18,9 @@
     <div>
         <h1 style="text-align:center;">Auto Pricer </h1>
         <hr>
-        <h3>Hello there, welcome to autopricer where you can</h3>
+        <p style="font-weight: bold">Hello there, welcome to AutoPricer, Canada&#39;s #32rd place to buy and sell old or used cars</p>
         <hr>
-        <h3>asdasdas</h3>
+        <h3>Check out the FAQ for more info!</h3>
     </div>
         </td>
         <td>
