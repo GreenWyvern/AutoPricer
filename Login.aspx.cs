@@ -58,26 +58,7 @@ using System.Web.UI.WebControls;
             else if (account.Equals("unconfirmed"))
             {
                 rowCode.Visible= true;
-                /*
-                 look for authentication    
-                if(Autgebtucation found){
-                    if(code correct)
-                    {
-                        userConfirm();
-                        Response.Redirect("~/UserProfile.aspx");
-                    } 
-                    else
-                    {
-                        alert user
-                    }
-                  } 
-                else(){
-                    insertAuthentication();
-                }
-
-                 */
-
-                /*
+                
                 SqlCommand comm2 = new SqlCommand("SELECT Code FROM Authentication WHERE Username=@username", conn);
                     comm2.Parameters.AddWithValue("@username", tbUsername.Text);
 
@@ -92,13 +73,14 @@ using System.Web.UI.WebControls;
                         if (code == inputCode)
                         {
                             reader2.Close();
-                            
-                            if (generateNewAuthenticationCode(tbUsername.Text))
-                            {
-                                userConfirm();
-                                Response.Redirect("~/UserProfile.aspx");
-                            }                   
+                            userConfirm();
+                            Response.Redirect("~/UserProfile.aspx");                
                         }
+						else if(code == "")
+						{
+							insertAuthentication();
+							labelWarning.Text = "Authentication Code generated, please check email";
+						}
                         else
                         {
                             labelWarning.Text = "Incorrect Code!";
@@ -106,7 +88,6 @@ using System.Web.UI.WebControls;
                         return;
                     }
                     reader2.Close();
-                    */
             }
             else
             {
@@ -142,7 +123,8 @@ using System.Web.UI.WebControls;
 
     private void insertAuthentication()
     {
-        SqlCommand comm2 = new SqlCommand(@"INSERT INTO [Authentication](Id,Code) Values('" + tbUsername.Text + "', '" + tbPassword.Text + "', '" + tbEmail.Text + "', '" + tbAddress.Text + "', '" + tbPhone.Text + "'," + "'unconfirmed')", conn);
+		int newCode = new Random().Next(1000, 10000);
+        SqlCommand comm2 = new SqlCommand(@"INSERT INTO [Authentication](Username,Code) Values('" + tbUsername.Text + "', newCode, conn);
         try
         {
             comm2.ExecuteNonQuery();
@@ -163,7 +145,7 @@ using System.Web.UI.WebControls;
 
 
 
-
+/*
 
 
 
@@ -263,3 +245,4 @@ using System.Web.UI.WebControls;
         return false;
     }
 }
+*/
