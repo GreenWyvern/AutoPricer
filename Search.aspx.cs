@@ -65,6 +65,15 @@ using System.Web.UI.WebControls;
                 {
                     statement += "Make LIKE \'" + tbCondition.Text + "\' AND ";
                 }
+				/*
+				if (tbPriceMin.Text != null)
+                {
+                    statement += "Price >='" + tbPriceMin.Text + "\' AND ";
+                }
+				if (tbPriceMax.Text != null)
+                {
+                    statement += "Price <='" + tbPriceMax.Text + "\' AND ";
+                }*/
                 statement.Substring(statement.Length - 4);
                 statement += ";";
             }

@@ -54,6 +54,14 @@
                         <asp:TextBox ID="tbCondition" runat="server"/>
                     </asp:TableCell>
                 </asp:TableRow>
+				 <asp:TableRow>
+                    <asp:TableCell>
+                        Price:
+                    </asp:TableCell>
+                    <asp:TableCell>
+                        <asp:TextBox ID="tbPriceMin" runat="server" type="number"/> to  <asp:TextBox ID="tbPriceMax" runat="server" type="number"/>
+                    </asp:TableCell>
+                </asp:TableRow>
             </asp:Table>
             <asp:Button ID="btnSearch" runat="server" Text="Search" onclick="btnSearch_Click"/><br/>
             <asp:Label ID="labelWarning" runat="server" Text=""/>
