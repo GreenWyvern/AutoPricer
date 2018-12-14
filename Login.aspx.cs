@@ -57,18 +57,31 @@ using System.Web.UI.WebControls;
             }
             else if (account.Equals("unconfirmed"))
             {
+ 
                 rowCode.Visible= true;
                 
                 SqlCommand comm2 = new SqlCommand("SELECT Code FROM Authentication WHERE Username=@username", conn);
                     comm2.Parameters.AddWithValue("@username", tbUsername.Text);
 
                     SqlDataReader reader2 = comm2.ExecuteReader();
-                    while (reader2.Read())
+
+
+                if (!reader2.Read())
+                {
+                    insertAuthentication();
+                    sendAuthenticationCode(tbUsername.Text);
+                    labelWarning.Text = "Authentication Code generated, please check email";
+                }
+
+                while (reader2.Read())
                     {
                         int code = reader2.GetInt32(0);
 
                         int inputCode = 0;
                         int.TryParse(tbCode.Text, out inputCode);
+
+                    labelWarning.Text = code +"- "+ inputCode;
+                    
 
                         if (code == inputCode)
                         {
@@ -76,16 +89,10 @@ using System.Web.UI.WebControls;
                             userConfirm();
                             Response.Redirect("~/UserProfile.aspx");                
                         }
-						else if(code == "")
-						{
-							insertAuthentication();
-							labelWarning.Text = "Authentication Code generated, please check email";
-						}
                         else
                         {
                             labelWarning.Text = "Incorrect Code!";
                         }
-                        return;
                     }
                     reader2.Close();
             }
@@ -124,7 +131,7 @@ using System.Web.UI.WebControls;
     private void insertAuthentication()
     {
 		int newCode = new Random().Next(1000, 10000);
-        SqlCommand comm2 = new SqlCommand(@"INSERT INTO [Authentication](Username,Code) Values('" + tbUsername.Text + "', newCode, conn);
+        SqlCommand comm2 = new SqlCommand(@"INSERT INTO [Authentication](Username,Code) Values('" + tbUsername.Text + "', " + newCode+")", conn);
         try
         {
             comm2.ExecuteNonQuery();
@@ -145,104 +152,104 @@ using System.Web.UI.WebControls;
 
 
 
-/*
+    /*
 
 
 
-    private bool requireAuthentication(string username)
-    {
-        SqlCommand comm = new SqlCommand("SELECT * FROM Authentication WHERE Username=@username", conn);
-        comm.Parameters.AddWithValue("@username", tbUsername.Text);
-        try
+        private bool requireAuthentication(string username)
         {
-            SqlDataReader reader = comm.ExecuteReader();
-            while (reader.Read())
+            SqlCommand comm = new SqlCommand("SELECT * FROM Authentication WHERE Username=@username", conn);
+            comm.Parameters.AddWithValue("@username", tbUsername.Text);
+            try
             {
-                DateTime expiryTime = reader.GetDateTime(2);
-                DateTime now = DateTime.Now;
-
-                // If the authentication code expiry 5 minutes ago then user must do authentication
-                if (now >= expiryTime)
+                SqlDataReader reader = comm.ExecuteReader();
+                while (reader.Read())
                 {
-                    reader.Close();
-                    bool sent = sendAuthenticationCode(tbUsername.Text);
-                    labelWarning.Text = "2 Way Authentication Required!\n" + (sent ? "Authentication Code Sent. " : "") + "Please check your email. This might take a while.";
+                    DateTime expiryTime = reader.GetDateTime(2);
+                    DateTime now = DateTime.Now;
+
+                    // If the authentication code expiry 5 minutes ago then user must do authentication
+                    if (now >= expiryTime)
+                    {
+                        reader.Close();
+                        bool sent = sendAuthenticationCode(tbUsername.Text);
+                        labelWarning.Text = "2 Way Authentication Required!\n" + (sent ? "Authentication Code Sent. " : "") + "Please check your email. This might take a while.";
+                        return true;
+                    }
+                }
+                reader.Close();
+            }
+            catch(Exception ex)
+            {
+                labelWarning.Text = ex.Message;
+            }
+            return false;
+        }
+
+        private bool generateNewAuthenticationCode(string username)
+        {
+            try
+            {
+                int newCode = new Random().Next(1000, 10000);
+                DateTime expiryTime = DateTime.Now.AddMinutes(5);
+
+                SqlCommand comm = new SqlCommand("UPDATE Authentication SET Code=@code, ExpiryTime=@expiryTime WHERE Username=@username", conn);
+                comm.Parameters.AddWithValue("@username", tbUsername.Text);
+                comm.Parameters.AddWithValue("@code", newCode);
+                comm.Parameters.AddWithValue("@expiryTime", expiryTime);
+
+                if (comm.ExecuteNonQuery() > 0)
+                {
                     return true;
                 }
+                else
+                {
+                    return false;
+                }
             }
-            reader.Close();
-        }
-        catch(Exception ex)
-        {
-            labelWarning.Text = ex.Message;
-        }
-        return false;
-    }
-
-    private bool generateNewAuthenticationCode(string username)
-    {
-        try
-        {
-            int newCode = new Random().Next(1000, 10000);
-            DateTime expiryTime = DateTime.Now.AddMinutes(5);
-
-            SqlCommand comm = new SqlCommand("UPDATE Authentication SET Code=@code, ExpiryTime=@expiryTime WHERE Username=@username", conn);
-            comm.Parameters.AddWithValue("@username", tbUsername.Text);
-            comm.Parameters.AddWithValue("@code", newCode);
-            comm.Parameters.AddWithValue("@expiryTime", expiryTime);
-
-            if (comm.ExecuteNonQuery() > 0)
+            catch (Exception ex)
             {
+                labelWarning.Text = ex.Message;
+            }
+            return false;
+        }
+         */
+    private bool sendAuthenticationCode(string username)
+        {
+            try
+            {
+                SqlCommand getCodeComm = new SqlCommand("Select Code From Authentication WHERE Username=@username", conn);
+                getCodeComm.Parameters.AddWithValue("@username", username);
+                SqlCommand getEmailComm = new SqlCommand("Select Email From [User] WHERE Username=@username", conn);
+                getEmailComm.Parameters.AddWithValue("@username", username);
+
+                SqlDataReader reader = getCodeComm.ExecuteReader();
+
+                reader.Read();
+                int code = reader.GetInt32(0);
+
+                reader.Close();
+
+                reader = getEmailComm.ExecuteReader();
+                reader.Read();
+
+                string emailAddress = reader.GetString(0);
+
+                reader.Close();
+
+                string message = "Hello <b>" + username + "</b>,\n<br>Here is your authentication code: <b>" + code + "</b>";
+
+                labelWarning.Text += code;
+                labelWarning.Text += emailAddress;
+
+                EmailSender.Send(emailAddress, "Auto Price Authentication Code", message);
                 return true;
             }
-            else
+            catch (Exception ex)
             {
-                return false;
+                labelWarning.Text = ex.Message;
             }
+            return false;
         }
-        catch (Exception ex)
-        {
-            labelWarning.Text = ex.Message;
-        }
-        return false;
-    }
-
-    private bool sendAuthenticationCode(string username)
-    {
-        try
-        {
-            SqlCommand getCodeComm = new SqlCommand("Select Code From Authentication WHERE Username=@username", conn);
-            getCodeComm.Parameters.AddWithValue("@username", username);
-            SqlCommand getEmailComm = new SqlCommand("Select Email From [User] WHERE Username=@username", conn);
-            getEmailComm.Parameters.AddWithValue("@username", username);
-
-            SqlDataReader reader = getCodeComm.ExecuteReader();
-
-            reader.Read();
-            int code = reader.GetInt32(0);
-
-            reader.Close();
-
-            reader = getEmailComm.ExecuteReader();
-            reader.Read();
-
-            string emailAddress = reader.GetString(0);
-
-            reader.Close();
-
-            string message = "Hello <b>" + username + "</b>,\n<br>Here is your authentication code: <b>" + code + "</b>";
-
-            labelWarning.Text += code;
-            labelWarning.Text += emailAddress;
-
-            EmailSender.Send(emailAddress, "Auto Price Authentication Code", message);
-            return true;
-        }
-        catch (Exception ex)
-        {
-            labelWarning.Text = ex.Message;
-        }
-        return false;
-    }
+       
 }
-*/
