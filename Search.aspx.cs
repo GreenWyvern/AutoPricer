@@ -57,6 +57,7 @@ using System.Web.UI.WebControls;
                     statement += "Make LIKE \'" + tbCondition.Text + "\' AND ";
                 }
                 statement.Substring(0,statement.Length - 4);
+            statement += "JOIN Listing ON Listing.CarID = Car.CarId";
                 //statement += ";";
             }
             return statement;
