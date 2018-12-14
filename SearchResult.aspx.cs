@@ -32,6 +32,7 @@ public partial class SearchResult : System.Web.UI.Page
 
     private void BindGrid(string cmd = "SELECT * FROM Car")
     {
+        cmd = (string)Session["Search"];
         // Define data objects
         SqlConnection conn;
         dataSet = new DataSet();

@@ -27,7 +27,7 @@
                         Milage:
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="tbMilageMin" runat="server" type="number"/> to  <asp:TextBox ID="tbMilageMax" runat="server" type="number"/>
+                        <asp:TextBox ID="tbMilage" runat="server"/>
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -35,7 +35,7 @@
                         Age:
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="tbAgeMin" runat="server" type="number"/> to  <asp:TextBox ID="tbAgeMax" runat="server" type="number"/>
+                        <asp:TextBox ID="tbAge" runat="server"/>
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -59,7 +59,7 @@
                         Price:
                     </asp:TableCell>
                     <asp:TableCell>
-                        <asp:TextBox ID="tbPriceMin" runat="server" type="number"/> to  <asp:TextBox ID="tbPriceMax" runat="server" type="number"/>
+                        <asp:TextBox ID="tbPriceMin" runat="server" type="number"/>
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>

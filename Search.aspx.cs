@@ -15,67 +15,49 @@ using System.Web.UI.WebControls;
         protected void btnSearch_Click(object sender, EventArgs e)
         {
         Session["Search"] = selectStatement();
-        Response.Redirect("~/SearchResult.aspx");
+        //Response.Redirect("~/SearchResult.aspx");
+        tbModel.Text = (string)Session["Search"];
         }
 
         private string selectStatement()
         {
             statement = "SELECT * FROM [Car] ";
             //if there is a where condition
-            if (tbModel.Text != null || tbMake.Text != null || tbMilageMin.Text != null || tbMilageMax.Text != null || tbAgeMin.Text != null || tbAgeMax.Text != null || tbEngine.Text != null || tbCondition.Text != null )
+            if (tbModel.Text != "" || tbMake.Text != "" || tbMilage.Text != "" || tbAge.Text != "" || tbEngine.Text != "" || tbCondition.Text != "")
             {
                 statement += "WHERE ";
                 //model
-                if (tbModel.Text != null)
+                if (tbModel.Text != "")
                 {
                     statement += "Model LIKE \'" + tbModel.Text + "\' AND ";
                 }
                 //make
-                if (tbMake.Text != null)
+                if (tbMake.Text != "")
                 {
                     statement += "Make LIKE \'" + tbMake.Text + "\' AND ";
                 }
                 //milage min
-                if (tbMilageMin.Text != null)
+                if (tbMilage.Text != "")
                 {
-                    statement += "Milage >=" + tbMilageMin.Text + "\' AND ";
+                    statement += "Milage LIKE \'" + tbMilage.Text + "\' AND ";
                 }
-                //milage max
-                if (tbMilageMin.Text != null)
+                //age 
+                if (tbAge.Text != "")
                 {
-                    statement += "Milage <=" + tbMilageMax.Text + "\' AND ";
-                }
-                //age min
-                if (tbAgeMin.Text != null)
-                {
-                    statement += "Age >=" + tbAgeMin.Text + "\' AND ";
-                }
-                //age max
-                if (tbAgeMax.Text != null)
-                {
-                    statement += "Age <=" + tbAgeMax.Text + "\' AND ";
+                    statement += "Age LIKE \'" + tbAge.Text + "\' AND ";
                 }
                 //engine
-                if (tbEngine.Text != null)
+                if (tbEngine.Text != "")
                 {
                     statement += "Make LIKE \'" + tbEngine.Text + "\' AND ";
                 }
                 //condition
-                if (tbCondition.Text != null)
+                if (tbCondition.Text != "")
                 {
                     statement += "Make LIKE \'" + tbCondition.Text + "\' AND ";
                 }
-				/*
-				if (tbPriceMin.Text != null)
-                {
-                    statement += "Price >='" + tbPriceMin.Text + "\' AND ";
-                }
-				if (tbPriceMax.Text != null)
-                {
-                    statement += "Price <='" + tbPriceMax.Text + "\' AND ";
-                }*/
-                statement.Substring(statement.Length - 4);
-                statement += ";";
+                statement.Substring(0,statement.Length - 4);
+                //statement += ";";
             }
             return statement;
         }
