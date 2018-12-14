@@ -46,60 +46,67 @@ using System.Web.UI.WebControls;
             {
                 System.Web.HttpContext.Current.Session["user"] = tbUsername.Text;
                 System.Web.HttpContext.Current.Session["accountType"] = "admin";
-                if (requireAuthentication(tbUsername.Text))
-                {
-                    if(rowCode.Visible == false)
-                    {
-                        rowCode.Visible = true;
-                        return;
-                    }
-                    else
-                    {
-                        SqlCommand comm2 = new SqlCommand("SELECT Code FROM Authentication WHERE Username=@username", conn);
-                        comm2.Parameters.AddWithValue("@username", tbUsername.Text);
+                Response.Redirect("~/Admin.aspx");
 
-                        SqlDataReader reader2 = comm2.ExecuteReader();
-                        while (reader2.Read())
-                        {
-                            int code = reader2.GetInt32(0);
-
-                            int inputCode = 0;
-                            int.TryParse(tbCode.Text, out inputCode);
-
-                            if (code == inputCode)
-                            {
-                                reader2.Close();
-                                if (generateNewAuthenticationCode(tbUsername.Text))
-                                {
-                                    Response.Redirect("~/Admin.aspx");
-                                }
-                            }
-                            else
-                            {
-                                labelWarning.Text = "Incorrect Code!";
-                            }
-                            return;
-                        }
-                        reader2.Close();
-                    }
-                }
-                else
-                {
-                    Response.Redirect("~/Admin.aspx");
-                }
             }
             else if (account.Equals("regular"))
             {
                 System.Web.HttpContext.Current.Session["user"] = tbUsername.Text;
                 System.Web.HttpContext.Current.Session["accountType"] = "regular";
-                if (requireAuthentication(tbUsername.Text))
-                {
-                   
+                Response.Redirect("~/UserProfile.aspx");
+            }
+            else if (account.Equals("unconfirmed"))
+            {
+                rowCode.Visible= true;
+                /*
+                 look for authentication    
+                if(Autgebtucation found){
+                    if(code correct)
+                    {
+                        userConfirm();
+                        Response.Redirect("~/UserProfile.aspx");
+                    } 
+                    else
+                    {
+                        alert user
+                    }
+                  } 
+                else(){
+                    insertAuthentication();
                 }
-                else
-                {
-                    Response.Redirect("~/UserProfile.aspx");
-                }
+
+                 */
+
+                /*
+                SqlCommand comm2 = new SqlCommand("SELECT Code FROM Authentication WHERE Username=@username", conn);
+                    comm2.Parameters.AddWithValue("@username", tbUsername.Text);
+
+                    SqlDataReader reader2 = comm2.ExecuteReader();
+                    while (reader2.Read())
+                    {
+                        int code = reader2.GetInt32(0);
+
+                        int inputCode = 0;
+                        int.TryParse(tbCode.Text, out inputCode);
+
+                        if (code == inputCode)
+                        {
+                            reader2.Close();
+                            
+                            if (generateNewAuthenticationCode(tbUsername.Text))
+                            {
+                                userConfirm();
+                                Response.Redirect("~/UserProfile.aspx");
+                            }                   
+                        }
+                        else
+                        {
+                            labelWarning.Text = "Incorrect Code!";
+                        }
+                        return;
+                    }
+                    reader2.Close();
+                    */
             }
             else
             {
@@ -117,10 +124,10 @@ using System.Web.UI.WebControls;
         }
     }
 
-    private void emailConfirm()//set the user account type to activated
+    private void userConfirm()//set the user account type to regular
         {
             
-            SqlCommand comm = new SqlCommand("UPDATE user SET AccountType = Activated WHERE Username =@username ", conn);
+            SqlCommand comm = new SqlCommand("UPDATE user SET AccountType = Regular WHERE Username =@username ", conn);
             comm.Parameters.AddWithValue("@username", tbUsername.Text);
             try
             {
@@ -132,6 +139,32 @@ using System.Web.UI.WebControls;
             {
             }
         }
+
+    private void insertAuthentication()
+    {
+        SqlCommand comm2 = new SqlCommand(@"INSERT INTO [Authentication](Id,Code) Values('" + tbUsername.Text + "', '" + tbPassword.Text + "', '" + tbEmail.Text + "', '" + tbAddress.Text + "', '" + tbPhone.Text + "'," + "'unconfirmed')", conn);
+        try
+        {
+            comm2.ExecuteNonQuery();
+            Response.Redirect("~/Login.aspx");
+        }
+        catch (Exception ex)
+        {
+            labelWarning.Text = ex.Message + "failed to insert to database!";
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     private bool requireAuthentication(string username)

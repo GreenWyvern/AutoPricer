@@ -17,7 +17,7 @@ public partial class Register : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         Random random = new Random();
-        confirmNumber = random.Next(0, 1000000);
+ 
     }
     protected void btnBack_Click(object sender, EventArgs e)
     {
@@ -39,15 +39,13 @@ public partial class Register : System.Web.UI.Page
             }
             reader.Close();
 
-            if (user.Equals("") && Convert.ToInt32(tbConfirm.Text) == confirmNumber)//if account not taken
+            if (user.Equals(""))//if account not taken
             {
-                SqlCommand comm2 = new SqlCommand(@"INSERT INTO [User](Username,Password,Email,Address,PhoneNumber,AccountType) Values('" + tbUsername.Text + "', '" + tbPassword.Text + "', '" + tbEmail.Text + "', '" + tbAddress.Text + "', '" + tbPhone.Text + "'," + "'regular')", conn);
-                SqlCommand comm3 = new SqlCommand(@"INSERT INTO Authentication(Username,Code,ExpiryTime) Values('" + tbUsername.Text + "'," + 0 + "," + DateTime.Now + ")", conn);
+                SqlCommand comm2 = new SqlCommand(@"INSERT INTO [User](Username,Password,Email,Address,PhoneNumber,AccountType) Values('" + tbUsername.Text + "', '" + tbPassword.Text + "', '" + tbEmail.Text + "', '" + tbAddress.Text + "', '" + tbPhone.Text + "'," + "'unconfirmed')", conn);
                 try
                 {
                     comm2.ExecuteNonQuery();
-                    comm3.ExecuteNonQuery();
-                    Response.Redirect("~/EmailConfirmation.aspx");
+                    Response.Redirect("~/Login.aspx");
                 }
                 catch (Exception ex)
                 {
@@ -56,7 +54,7 @@ public partial class Register : System.Web.UI.Page
             }
             else
             {
-                labelWarning.Text = "Username taken or incorrect email confirmation number";
+                labelWarning.Text = "Username taken";
             }
             conn.Close();
         }
@@ -66,38 +64,4 @@ public partial class Register : System.Web.UI.Page
         }
     }
 
-
-
-    protected void btnConfirm_Click(object sender, EventArgs e)
-    {
-        SmtpClient client = new SmtpClient();
-        client.DeliveryMethod = SmtpDeliveryMethod.Network;
-        client.EnableSsl = true;
-        client.Host = "smtp.gmail.com";
-        client.Port = 587;
-
-        // setup Smtp authentication
-        System.Net.NetworkCredential credentials =
-            new System.Net.NetworkCredential("TeamNKproject@gmail.com", "teamnk1!");
-        client.UseDefaultCredentials = false;
-        client.Credentials = credentials;
-        client.EnableSsl = true;
-
-        MailMessage msg = new MailMessage();
-        msg.From = new MailAddress("TeamNKproject@gmail.com");
-        msg.To.Add(new MailAddress(tbEmail.Text));
-
-        msg.Subject = "This is a test Email subject";
-        msg.IsBodyHtml = true;
-        msg.Body = string.Format("<html><head></head><body>your confirmation number is : {0}</body>", confirmNumber);
-
-        try
-        {
-            client.Send(msg);
-        }
-        catch (Exception ex)
-        {
-
-        }
-    }
 }

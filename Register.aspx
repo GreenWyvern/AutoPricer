@@ -45,14 +45,6 @@
                         <asp:TextBox ID="tbPhone" runat="server" type="number"/>
                     </asp:TableCell>
                 </asp:TableRow>
-                <asp:TableRow>
-                    <asp:TableCell>
-                        <asp:Button ID="btnConfirm" runat="server" Text="Send email confirmation" onclick="btnConfirm_Click"/>
-                    </asp:TableCell>
-                    <asp:TableCell>
-                        <asp:TextBox ID="tbConfirm" runat="server" type="number"/>
-                    </asp:TableCell>
-                </asp:TableRow>
             </asp:Table>
 
             <asp:Button ID="btnBack" runat="server" Text="Back" onclick="btnBack_Click"/>
