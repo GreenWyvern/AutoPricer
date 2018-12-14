@@ -22,7 +22,7 @@ using System.Web.UI.WebControls;
         {
             statement = "SELECT * FROM [Car] ";
             //if there is a where condition
-            if (tbModel.Text != null || tbMake.Text != null || tbMilageMin.Text != null || tbMilageMax.Text != null || tbAgeMin.Text != null || tbAgeMax.Text != null || tbEngine.Text != null || tbCondition.Text != null )
+            if (tbModel.Text != null || tbMake.Text != null || tbMilage.Text != null || tbAge.Text != null || tbEngine.Text != null || tbCondition.Text != null )
             {
                 statement += "WHERE ";
                 //model
@@ -36,24 +36,14 @@ using System.Web.UI.WebControls;
                     statement += "Make LIKE \'" + tbMake.Text + "\' AND ";
                 }
                 //milage min
-                if (tbMilageMin.Text != null)
+                if (tbMilage.Text != null)
                 {
-                    statement += "Milage >=" + tbMilageMin.Text + "\' AND ";
+                    statement += "Milage LIKE \'" + tbMilage.Text + "\' AND ";
                 }
-                //milage max
-                if (tbMilageMin.Text != null)
+                //age 
+                if (tbAge.Text != null)
                 {
-                    statement += "Milage <=" + tbMilageMax.Text + "\' AND ";
-                }
-                //age min
-                if (tbAgeMin.Text != null)
-                {
-                    statement += "Age >=" + tbAgeMin.Text + "\' AND ";
-                }
-                //age max
-                if (tbAgeMax.Text != null)
-                {
-                    statement += "Age <=" + tbAgeMax.Text + "\' AND ";
+                    statement += "Age LIKE \'" + tbAge.Text + "\' AND ";
                 }
                 //engine
                 if (tbEngine.Text != null)
@@ -65,16 +55,7 @@ using System.Web.UI.WebControls;
                 {
                     statement += "Make LIKE \'" + tbCondition.Text + "\' AND ";
                 }
-				/*
-				if (tbPriceMin.Text != null)
-                {
-                    statement += "Price >='" + tbPriceMin.Text + "\' AND ";
-                }
-				if (tbPriceMax.Text != null)
-                {
-                    statement += "Price <='" + tbPriceMax.Text + "\' AND ";
-                }*/
-                statement.Substring(statement.Length - 4);
+                statement.Substring(0,statement.Length - 4);
                 statement += ";";
             }
             return statement;
