@@ -15,13 +15,13 @@ using System.Web.UI.WebControls;
         protected void btnSearch_Click(object sender, EventArgs e)
         {
         Session["Search"] = selectStatement();
-        //Response.Redirect("~/SearchResult.aspx");
-        tbModel.Text = (string)Session["Search"];
+        Response.Redirect("~/SearchResult.aspx");
+        //tbModel.Text = (string)Session["Search"];
         }
 
         private string selectStatement()
         {
-            statement = "SELECT * FROM [Car] ";
+            statement = "SELECT * FROM [Car] JOIN Listing ON Listing.CarID = Car.CarID ";
             //if there is a where condition
             if (tbModel.Text != "" || tbMake.Text != "" || tbMilage.Text != "" || tbAge.Text != "" || tbEngine.Text != "" || tbCondition.Text != "")
             {
@@ -49,16 +49,15 @@ using System.Web.UI.WebControls;
                 //engine
                 if (tbEngine.Text != "")
                 {
-                    statement += "Make LIKE \'" + tbEngine.Text + "\' AND ";
+                    statement += "Engine LIKE \'" + tbEngine.Text + "\' AND ";
                 }
                 //condition
                 if (tbCondition.Text != "")
                 {
-                    statement += "Make LIKE \'" + tbCondition.Text + "\' AND ";
+                    statement += "Condition LIKE \'" + tbCondition.Text + "\' AND ";
                 }
-                statement.Substring(0,statement.Length - 4);
-                //statement += ";";
+                   statement = statement.Substring(0,statement.Length - 4);           
             }
-            return statement;
+        return statement;
         }
     }
