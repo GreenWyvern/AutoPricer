@@ -16,12 +16,12 @@ using System.Web.UI.WebControls;
         {
         Session["Search"] = selectStatement();
         Response.Redirect("~/SearchResult.aspx");
-        //tbModel.Text = (string)Session["Search"];
+        tbModel.Text = (string)Session["Search"];
         }
 
         private string selectStatement()
         {
-            statement = "SELECT * FROM [Car] JOIN Listing ON Listing.CarID = Car.CarID ";
+            statement = "SELECT * FROM Car JOIN Listing ON Listing.CarID = Car.CarID ";
             //if there is a where condition
             if (tbModel.Text != "" || tbMake.Text != "" || tbMilage.Text != "" || tbAge.Text != "" || tbEngine.Text != "" || tbCondition.Text != "")
             {
@@ -29,34 +29,35 @@ using System.Web.UI.WebControls;
                 //model
                 if (tbModel.Text != "")
                 {
-                    statement += "Model LIKE \'" + tbModel.Text + "\' AND ";
+                    statement += "Model = '" + tbModel.Text + "' AND ";
                 }
                 //make
                 if (tbMake.Text != "")
                 {
-                    statement += "Make LIKE \'" + tbMake.Text + "\' AND ";
+                    statement += "Make = '" + tbMake.Text + "' AND ";
                 }
                 //milage min
                 if (tbMilage.Text != "")
                 {
-                    statement += "Milage LIKE \'" + tbMilage.Text + "\' AND ";
+                    statement += "Milage = '" + tbMilage.Text + "' AND ";
                 }
                 //age 
                 if (tbAge.Text != "")
                 {
-                    statement += "Age LIKE \'" + tbAge.Text + "\' AND ";
+                    statement += "Age = '" + tbAge.Text + "' AND ";
                 }
                 //engine
                 if (tbEngine.Text != "")
                 {
-                    statement += "Engine LIKE \'" + tbEngine.Text + "\' AND ";
+                    statement += "Engine = '" + tbEngine.Text + "' AND ";
                 }
                 //condition
                 if (tbCondition.Text != "")
                 {
-                    statement += "Condition LIKE \'" + tbCondition.Text + "\' AND ";
+                    statement += "Condition = '" + tbCondition.Text + "' AND ";
                 }
-                   statement = statement.Substring(0,statement.Length - 4);           
+                   statement = statement.Substring(0,statement.Length - 4);
+            statement += ";";
             }
         return statement;
         }

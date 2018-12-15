@@ -16,6 +16,7 @@ public partial class SearchResult : System.Web.UI.Page
     //private int carId;
     //private string suggestedPrice;
     //private string listingStatus;
+    public string tmp;
     private string connectionString;
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -26,10 +27,11 @@ public partial class SearchResult : System.Web.UI.Page
 
     private void filldata()
     {
-
+        tmp = (string)Session["Search"];
         //SqlConnection conn = new SqlConnection(connectionString);
-        //SqlDataAdapter da = new SqlDataAdapter("select * from listing", conn);
-        SqlDataAdapter da = new SqlDataAdapter((string)Session["Search"], conn);
+        //SqlDataAdapter da = new SqlDataAdapter(, conn);
+        SqlDataAdapter da = new SqlDataAdapter("Select * from car where model = \'corolla\';", conn);
+        SqlDataSource1.SelectCommand = tmp;
         DataSet ds = new DataSet();
         da.Fill(ds);
         DataList1.DataBind();

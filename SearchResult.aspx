@@ -33,5 +33,5 @@
                     <br />
                 </ItemTemplate>
             </asp:DataList>
-            <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="SELECT * FROM [Listing]  INNER JOIN [Car] ON Listing.CarID=Car.CarID"></asp:SqlDataSource>
+            <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="SELECT * FROM Listing INNER JOIN Car ON Listing.CarID=Car.CarID"></asp:SqlDataSource>
 </asp:Content>
