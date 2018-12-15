@@ -45,6 +45,7 @@ public partial class Register : System.Web.UI.Page
                 try
                 {
                     comm2.ExecuteNonQuery();
+                    insertAuthentication();
                     Response.Redirect("~/Login.aspx");
                 }
                 catch (Exception ex)
@@ -63,5 +64,21 @@ public partial class Register : System.Web.UI.Page
             labelWarning.Text = "failed to connect to database";
         }
     }
+
+
+    private void insertAuthentication()
+    {
+        SqlCommand comm2 = new SqlCommand(@"INSERT INTO [Authentication](Username,Code) Values('" + tbUsername.Text + "', " + 0 + ")", conn);
+        try
+        {
+            comm2.ExecuteNonQuery();
+            //Response.Redirect("~/Login.aspx");
+        }
+        catch (Exception ex)
+        {
+            labelWarning.Text = ex.Message + "failed to insert to database!";
+        }
+    }
+
 
 }

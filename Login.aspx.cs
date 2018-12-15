@@ -9,19 +9,20 @@ using System.Web.UI.WebControls;
 
 
 
-    public partial class Login : System.Web.UI.Page
-    {
+public partial class Login : System.Web.UI.Page
+{
 
     SqlConnection conn = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\AutoDB.mdf;Integrated Security=True");
+    bool codeSent = false;
     protected void Page_Load(object sender, EventArgs e)
-        {
+    {
 
-        }
+    }
 
-        protected void btnRegister_Click(object sender, EventArgs e)
-        {
-            Response.Redirect("~/Register.aspx");
-        }
+    protected void btnRegister_Click(object sender, EventArgs e)
+    {
+        Response.Redirect("~/Register.aspx");
+    }
 
     protected void btnLogin_Click(object sender, EventArgs e)
     {
@@ -39,8 +40,13 @@ using System.Web.UI.WebControls;
                 account = reader[0].ToString().Trim();
             }
             reader.Close();
+            if (requireConfirmAccount(tbUsername.Text))
+            {
+                labelWarning.Text = "Authentication required.";
 
+                rowCode.Visible = true;
 
+            }
             if (account.Equals("admin"))
             {
                 System.Web.HttpContext.Current.Session["user"] = tbUsername.Text;
@@ -56,66 +62,79 @@ using System.Web.UI.WebControls;
             }
             else if (account.Equals("unconfirmed"))
             {
- 
-                rowCode.Visible= true;
 
-                SqlCommand commCheckCodeExist = new SqlCommand("SELECT Code FROM Authentication WHERE Username=@username", conn);
-                commCheckCodeExist.Parameters.AddWithValue("@Username", tbUsername.Text);
-                // Check if there is code in the Authentication
-                if (commCheckCodeExist.ExecuteNonQuery() > 0)
+                SqlCommand commCode = new SqlCommand("SELECT Code FROM Authentication WHERE Username=@username", conn);
+
+                commCode.Parameters.AddWithValue("@Username", tbUsername.Text);
+                SqlDataReader readCode = commCode.ExecuteReader();
+                if (!readCode.HasRows)
                 {
+                    readCode.Close();
                     insertAuthentication();
+                    if (generateNewAuthenticationCode(tbUsername.Text))
+                    {
+                        if (sendAuthenticationCode(tbUsername.Text))
+                        {
+                            labelWarning.Text = "Confirmation code sent, please check email to activate your account.";
+                        }
+                    }
                     labelWarning.Text = "Confirmation code sent, please check email to activate your account.";
                     return;
                 }
-
-                SqlCommand comm2 = new SqlCommand("SELECT Code FROM Authentication WHERE Username=@username", conn);
-                comm2.Parameters.AddWithValue("@username", tbUsername.Text);
-
-                    SqlDataReader reader2 = comm2.ExecuteReader();
-
-
-                if (!reader2.Read())
+               
+                readCode.Close();
+                readCode = commCode.ExecuteReader();
+                readCode.Read();
+                int code = readCode.GetInt32(0);
+                if (code == 0)
                 {
-                    insertAuthentication();
-                    sendAuthenticationCode(tbUsername.Text);
-                    labelWarning.Text = "Authentication Code generated, please check email";
-                }
-
-                while (reader2.Read())
+                    readCode.Close();
+                    if (generateNewAuthenticationCode(tbUsername.Text))
                     {
-                        int code = reader2.GetInt32(0);
-
-                        int inputCode = 0;
-                        int.TryParse(tbCode.Text, out inputCode);
-
-                    labelWarning.Text = code +"- "+ inputCode;
-                    
-
-                        if (code == inputCode)
+                        if (sendAuthenticationCode(tbUsername.Text))
                         {
-                            reader2.Close();
-                            userConfirm();
-                            Response.Redirect("~/UserProfile.aspx");                
+                            labelWarning.Text = "Confirmation code sent, please check email to activate your account.";
                         }
-                        else
-                        {
-                            labelWarning.Text = "Incorrect Code!";
-                        }
+                    }
+                    else
+                    {
+                        labelWarning.Text = "Unable to activate your account, please contact admin.";
+                    }
+                }
+                else
+                {
+                    SqlCommand comm2 = new SqlCommand("SELECT Code FROM Authentication WHERE Username=@username", conn);
+                    comm2.Parameters.AddWithValue("@username", tbUsername.Text);
+                    readCode.Close();
+                    readCode = comm2.ExecuteReader();
+                    readCode.Read();
+                    int newCode = readCode.GetInt32(0);
+
+                    int inputCode = 0;
+                    int.TryParse(tbCode.Text, out inputCode);
+
+                    if(newCode == 0)
+                    {
+                        labelWarning.Text = "Authentication required. Check your email.";
+                    }
+
+                    if (inputCode == newCode)
+                    {
+                        userConfirm();
+                        Response.Redirect("~/UserProfile.aspx");
                     }
                     else
                     {
                         labelWarning.Text = "Incorrect Code!";
                     }
                 }
-                reader2.Close();
 
+                
             }
             else
             {
                 labelWarning.Text = "account not found";
             }
-            
         }
         catch (Exception ex)
         {
@@ -126,6 +145,7 @@ using System.Web.UI.WebControls;
             conn.Close();
         }
     }
+
 
 
     private bool UserExist(string username)
@@ -142,35 +162,44 @@ using System.Web.UI.WebControls;
     private void userConfirm()//set the user account type to regular
         {
             
-            SqlCommand comm = new SqlCommand("UPDATE user SET AccountType = Regular WHERE Username =@username ", conn);
+            SqlCommand comm = new SqlCommand("UPDATE [User] SET AccountType = 'Regular' WHERE Username =@username ", conn);
             comm.Parameters.AddWithValue("@username", tbUsername.Text);
             try
             {
-                conn.Open();
                 comm.ExecuteNonQuery();
-                conn.Close();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+            labelWarning.Text = ex.Message; 
             }
         }
 
-    private void insertAuthentication()
+    private bool requireConfirmAccount(string username)
     {
-		int newCode = new Random().Next(1000, 10000);
-        SqlCommand comm2 = new SqlCommand(@"INSERT INTO [Authentication](Username,Code) Values('" + tbUsername.Text + "', " + newCode+")", conn);
+        SqlCommand comm = new SqlCommand("SELECT AccountType FROM [User] WHERE Username=@username", conn);
+        comm.Parameters.AddWithValue("@username", username);
         try
         {
-            comm2.ExecuteNonQuery();
-            //Response.Redirect("~/Login.aspx");
+            SqlDataReader reader = comm.ExecuteReader();
+            reader.Read();
+            string type = reader.GetString(0).Trim().ToLower();
+            if (type.Equals("unconfirmed"))
+            {
+                reader.Close();
+                return true;
+            }
+            else
+            {
+                reader.Close();
+                return false;
+            }
         }
         catch (Exception ex)
         {
-            labelWarning.Text = ex.Message + "failed to insert to database!";
+            labelWarning.Text = ex.Message;
         }
+        return false;
     }
-    
-
 
 
     /*
@@ -213,14 +242,14 @@ using System.Web.UI.WebControls;
                 labelWarning.Text = ex.Message;
             }
             return false;
-        }
+        }*/
 
-        private bool generateNewAuthenticationCode(string username)
+    private bool generateNewAuthenticationCode(string username)
         {
             try
             {
                 int newCode = new Random().Next(1000, 10000);
-                DateTime expiryTime = DateTime.Now.AddMinutes(5);
+                DateTime expiryTime = DateTime.Now.AddYears(5);
 
                 SqlCommand comm = new SqlCommand("UPDATE Authentication SET Code=@code, ExpiryTime=@expiryTime WHERE Username=@username", conn);
                 comm.Parameters.AddWithValue("@username", tbUsername.Text);
@@ -242,9 +271,10 @@ using System.Web.UI.WebControls;
             }
             return false;
         }
-         */
+         
     private bool sendAuthenticationCode(string username)
         {
+            SqlDataReader reader = null;
             try
             {
                 SqlCommand getCodeComm = new SqlCommand("Select Code From Authentication WHERE Username=@username", conn);
@@ -252,9 +282,9 @@ using System.Web.UI.WebControls;
                 SqlCommand getEmailComm = new SqlCommand("Select Email From [User] WHERE Username=@username", conn);
                 getEmailComm.Parameters.AddWithValue("@username", username);
 
-                SqlDataReader reader = getCodeComm.ExecuteReader();
+            reader = getCodeComm.ExecuteReader();
 
-                reader.Read();
+            reader.Read();
                 int code = reader.GetInt32(0);
 
                 reader.Close();
@@ -278,7 +308,28 @@ using System.Web.UI.WebControls;
             {
                 labelWarning.Text = ex.Message;
             }
+            finally
+            {
+            if (reader != null)
+            {
+                reader.Close();
+            }
+               
+            }
             return false;
         }
-       
+
+    private void insertAuthentication()
+    {
+        SqlCommand comm2 = new SqlCommand(@"INSERT INTO [Authentication](Username, Code) Values('" + tbUsername.Text + "', " + 0 + ")", conn);
+        try
+        {
+            comm2.ExecuteNonQuery();
+
+        }
+        catch (Exception ex)
+        {
+            labelWarning.Text = ex.Message + "failed to insert to database!";
+        }
+    }
 }
