@@ -1,24 +1,37 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="SearchResult.aspx.cs" Inherits="SearchResult" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="SearchResult.aspx.cs" Inherits="SearchResult" %>
 
-<!DOCTYPE html>
+<asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+    <title>Listing Results</title>
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <title></title>
-</head>
-<body>
-    <form id="form1" runat="server">
-    <div>
-        <asp:GridView id="carsGrid" runat="server" AllowPaging="True" AllowSorting="True" OnSorting="carsGrid_Sorting" AutoGenerateColumns="False" OnSelectedIndexChanged="carsGrid_SelectedIndexChanged">
-            <Columns>
-                <asp:BoundField DataField="Model" HeaderText="Model" SortExpression="Model" />
-                <asp:BoundField DataField="Make" HeaderText="Make" SortExpression="Make" />
-                <asp:BoundField DataField="Mileage" HeaderText="Mileage" SortExpression="Mileage" />
-                <asp:BoundField DataField="Engine" HeaderText="Engine" SortExpression="Engine" />
-                <asp:BoundField DataField="Condition" HeaderText="Condition" SortExpression="Condition" />
-            </Columns>
-        </asp:GridView>
-    </div>
-    </form>
-</body>
-</html>
+            <asp:DataList ID="DataList1" runat="server" DataKeyField="ListingID" DataSourceID="SqlDataSource1" OnItemCommand="DataList1_ItemCommand" Font-Bold="False" Font-Italic="False" Font-Overline="False" Font-Strikeout="False" Font-Underline="False" >
+                <ItemTemplate>
+                    Username:
+                    <asp:Label ID="UsernameLabel" runat="server" Text='<%# Eval("Username") %>' />
+                    <br />
+                    SuggestedPrice:
+                    <asp:Label ID="SuggestedPriceLabel" runat="server" Text='<%# Eval("SuggestedPrice") %>' />
+<br />              ListingStatus:
+                    <asp:Label ID="ListingStatusLabel" runat="server" Text='<%# Eval("ListingStatus") %>' />
+                    <br />
+                    Model:
+                    <asp:Label ID="ModelLabel" runat="server" Text='<%# Eval("Model") %>' />
+                    <br />
+                    Make:
+                    <asp:Label ID="MakeLabel" runat="server" Text='<%# Eval("Make") %>' />
+                    <br />
+                    Milage:
+                    <asp:Label ID="MilageLabel" runat="server" Text='<%# Eval("Milage") %>' />
+                    <br />
+                    Engine:
+                    <asp:Label ID="EngineLabel" runat="server" Text='<%# Eval("Engine") %>' />
+                    <br />
+                    Condition:
+                    <asp:Label ID="ConditionLabel" runat="server" Text='<%# Eval("Condition") %>' />
+                    <br />
+                    <br />
+                </ItemTemplate>
+            </asp:DataList>
+            <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="SELECT * FROM [Listing]  INNER JOIN [Car] ON Listing.CarID=Car.CarID"></asp:SqlDataSource>
+</asp:Content>
